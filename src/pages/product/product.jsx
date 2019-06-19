@@ -12,10 +12,10 @@ export default class Product extends Component {
   render() {
     return (
       <Switch>
-        {/* exact：相当于是地址栏的地址与此单词所在的路径必须是完全匹配 */}
-        <Route path="/product" component={productHome} ></Route>
+        {/* exact：相当于是地址栏的地址与此单词所在的路径必须是完全匹配 ，比较精确的匹配*/}  
+        <Route path="/product" component={productHome} ></Route>              
         <Route path="/product/details" component={productDetails}></Route>
-        <Route path="/product/addupdate" component={productAddUpDate}></Route>         
+        <Route path="/product/addupdate" component={productAddUpDate}></Route>               
         <Redirect to="/product"></Redirect>
       </Switch>
     )
