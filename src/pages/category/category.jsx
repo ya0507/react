@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import {Card, Table,Button,Icon} from 'antd'
+import Linkbutton from '../../components/link-button'
+import {reqCategorys} from '../../api/index.js'
 
 
 
@@ -12,38 +14,53 @@ const columns = [
   },
   {
     title: '操作',
+    width:300,
     render:()=>{
-      
+      return (
+        <div >
+          <Linkbutton>修改分类</Linkbutton>
+          <Linkbutton>查看子分类</Linkbutton>
+        </div>
+      )
+     
     }
   }
 ];
 
-const data = [
-  {
-    "parentId": "0",
-    "_id": "5c2ed631f352726338607046",
-    "name": "分类001",
-    "__v": 0
-  },
-  {
-    "parentId": "0",
-    "_id": "5c2ed647f352726338607047",
-    "name": "分类2",
-    "__v": 0
-  },
-  {
-    "parentId": "0",
-    "_id": "5c2ed64cf352726338607048",
-    "name": "分类3",
-    "__v": 0
-  }
-];
 /* 
 Admin的分类管理子路由
 */
 export default class Category extends Component {
-  
+
+  state={
+    categorys:[],//一级分类数组
+    loading:false,//loading界面是否显示
+
+  }
+
+/* 获取一级列表或则二级列表 */
+getCategorys = async (parentId)=>{
+  //发送请求前，显示loading状态（loading的默认是false）
+  this.setState({loading:true})
+  const result = await reqCategorys(parentId)
+  //请求结束后，loading隐藏
+ this.setState({loading:false})
+   if(result.status === 0){
+    const categorys = result.data //data 是一级分类的数组
+    this.setState({
+      categorys
+    })
+   }
+}
+
+
+
+  componentDidMount(){
+    this.getCategorys()
+  }
   render() {
+    //读取数据的状态
+    const {categorys,loading} = this.state
 
     /* 1.定义card左侧标题 */
     const title = '一级分类列表' 
@@ -51,7 +68,6 @@ export default class Category extends Component {
     const extra =(
       
         <Button type="primary">
-
            <Icon type= "plus"/>
            添加
         </Button>
@@ -62,11 +78,15 @@ export default class Category extends Component {
      
       <Card title={title} extra={extra} >
       <Table
+        rowKey='_id'//用id作为唯一的标识｛表格行 key 的取值，可以是字符串或一个函数｝
         columns={columns}
-        dataSource={data}
+        loading={loading}//loading显示
+        dataSource={categorys}//数据数组
+        //Pagination:table表格下的分页显示，｛defaultPageSize是Pagination下的api;showQuickJumper的值是布尔值，默认情况下是false	｝
+        pagination={{defaultPageSize:2,showQuickJumper:true}}
         bordered
        
-      />,
+      />
     </Card>
     )
   }
