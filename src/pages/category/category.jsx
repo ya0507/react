@@ -45,10 +45,12 @@ export default class Category extends Component {
     }
       //显示某个一级分类的子列表
     subCategorys =(category)=>{
-      debugger
+      
     /* 
+    此时此刻
     setState()是异步更新的状态数据, 在setState()的后面直接读取状态数据是旧的数据
     利用setState({}, callback): callback在状态数据更新且界面更新后执行
+    看setState是谁的，主要是看this是谁
     */
       //首先更新parentId为当前指定的id
       this.setState({
@@ -82,6 +84,18 @@ export default class Category extends Component {
     ];
 
    }
+
+   //回退显示一级分类列表
+   showCategorys =()=>{
+    this.setState({
+      parentId:'0',
+      parentName:'',
+      subCategorys:[]
+    })
+   }
+
+
+   
    //第一次render之前执行
    componentWillMount(){
      this.initcolumns()
@@ -94,10 +108,16 @@ export default class Category extends Component {
 
   render() {
     //读取数据的状态
-    const {categorys,loading,subCategorys,parentId} = this.state
+    const {categorys,loading,subCategorys,parentId,parentName} = this.state
 
-    /* 1.定义card左侧标题 */
-    const title = '一级分类列表' 
+    /* 1.定义card左侧标题 ,但是需判断标题是一级标题还是二级标题*/
+    const title = parentId==='0'?'一级分类列表':(
+      <div>
+        <Linkbutton onClick={this.showCategorys}>一级分类列表</Linkbutton>
+        <Icon type="arrow-right"></Icon>&nbsp;
+        <span>{parentName}</span>
+      </div>
+    ) 
     /* 2.定义card右侧标题 */
     const extra =(
       
